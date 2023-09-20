@@ -1,13 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: argo-github
-secretGenerator:
-  - name: github
-    literals:
-      - secret=""
-    options:
-      disableNameSuffixHash: true
 resources:
   - ns.yaml
+  - secret.yaml
   - eventbus.yaml
   - eventsource.yaml
+  - httproute.yaml

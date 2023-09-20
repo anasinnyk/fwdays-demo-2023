@@ -13,11 +13,15 @@ spec:
       owner: anasinnyk
       repository: fwdays-demo-2023
       webhook:
-        endpoint: /push
+        endpoint: /hook
         port: "13000"
         method: POST
+        url: https://anasinnyk.macpaw.dev
       events:
         - registry_package
+      apiToken:
+        name: github
+        key: token
       webhookSecret:
         name: github
         key: secret

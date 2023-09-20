@@ -1,18 +1,13 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: argo-github
+  name: envoyproxy-gateway-operator
+  namespace: flux-system
 spec:
   interval: 10m
-  path: ./flux/resources/argo/github
+  path: ./flux/resources/envoy/gateway
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  dependsOn:
-    - name: argo-events
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-gpg
