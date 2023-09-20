@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: github
+spec:
+  service:
+    ports:
+      - name: webhook
+        port: 13000
+        targetPort: 13000
+  github:
+    webhook:
+      owner: anasinnyk
+      repository: fwdays-demo-2023
+      webhook:
+        endpoint: /push
+        port: "13000"
+        method: POST
+      events:
+        - registry_package
+      webhookSecret:
+        name: github
+        key: secret
+      active: true
+      contentType: json

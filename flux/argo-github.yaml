@@ -1,13 +1,15 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: argo-events
+  name: argo-github
   namespace: flux-system
 spec:
   interval: 10m
-  path: ./flux/resources/argo/events
+  path: ./flux/resources/argo/github
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
+  dependsOn:
+    - name: argo-events
