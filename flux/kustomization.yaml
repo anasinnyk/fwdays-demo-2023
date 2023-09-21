@@ -6,3 +6,4 @@ resources:
   - argo-github.yaml
   - envoy-gataway-class.yaml
   - envoy-gataway-operator.yaml
+  - greater.yaml

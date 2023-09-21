@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greater
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: greater
+      app.kubernetes.io/part-of: ${env}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: greater
+        app.kubernetes.io/part-of: ${env}
+    spec:
+      imagePullSecrets:
+        - name: github
+      containers:
+        - name: greater
+          image: ghcr.io/anasinnyk/fwdays-demo-2023/greater:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
