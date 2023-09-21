@@ -12,9 +12,9 @@ spec:
       transform:
         jq: |
           .body.argo = {
-            is_pr: body.registry_package.package_version.container_metadata.tag.name | test("^pr-[0-9]+.*$")),
-            number: body.registry_package.package_version.container_metadata.tag.name | sub("^pr-(?<n>[0-9]+).*$"; .n),
-            project: split("/", body.registry_package.name)[-1]
+            is_pr: (.body.registry_package.package_version.container_metadata.tag.name | test("^pr-[0-9]+.*$")),
+            number: (.body.registry_package.package_version.container_metadata.tag.name | sub("^pr-(?<n>[0-9]+).*$"; .n)),
+            project: (.body.registry_package.name | split("/")[-1])
           }
       filters:
         data:
