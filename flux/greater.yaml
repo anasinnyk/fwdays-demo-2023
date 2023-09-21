@@ -13,6 +13,7 @@ spec:
   postBuild:
     substitute:
       env: production
+      tag: latest
   decryption:
     provider: sops
     secretRef:

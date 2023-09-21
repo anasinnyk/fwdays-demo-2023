@@ -18,7 +18,7 @@ spec:
         - name: github
       containers:
         - name: greater
-          image: ghcr.io/anasinnyk/fwdays-demo-2023/greater:latest
+          image: ghcr.io/anasinnyk/fwdays-demo-2023/greater:${tag}
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

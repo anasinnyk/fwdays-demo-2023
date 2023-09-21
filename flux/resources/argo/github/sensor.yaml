@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: github
+spec:
+  template:
+    serviceAccountName: github
+  dependencies:
+    - name: dep
+      eventSourceName: github
+      eventName: registry_package
+      transform:
+        jq: |
+          .body.argo = {
+            is_pr: body.registry_package.package_version.container_metadata.tag.name | test("^pr-[0-9]+.*$")),
+            number: body.registry_package.package_version.container_metadata.tag.name | sub("^pr-(?<n>[0-9]+).*$"; .n),
+            project: split("/", body.registry_package.name)[-1]
+          }
+      filters:
+        data:
+          - path: body.argo.is_pr
+            type: bool
+            value:
+              - "true"
+  triggers:
+    - template:
+        name: pr
+        k8s:
+          operation: patch
+          source:
+            resource:
+              apiVersion: kustomize.toolkit.fluxcd.io/v1
+              kind: Kustomization
+              metadata:
+                namespace: flux-system
+              spec:
+                interval: 10m
+                path: ./flux/projects/
+                prune: true
+                sourceRef:
+                  kind: GitRepository
+                  name: flux-system
+                  namespace: flux-system
+                postBuild:
+                  substitute:
+                    env: pr-
+                    tag: latest
+                decryption:
+                  provider: sops
+                  secretRef:
+                    name: sops-gpg
+          parameters:
+            - src:
+                dependencyName: dep
+                dataTemplate: "{{ .Input.body.argo.project }}-pr-{{ .Input.body.argo.number }}"
+              dest: metadata.name
+            - src:
+                dependencyName: dep
+                dataKey: body.argo.project
+              dest: spec.path
+              operation: append
+            - src:
+                dependencyName: dep
+                dataKey: body.argo.number
+              dest: spec.postBuild.substitute.env
+              operation: append
+            - src:
+                dependencyName: dep
+                dataKey: body.registry_package.package_version.container_metadata.tag.name
+              dest: spec.postBuild.substitute.tag
